@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IP统计</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="./static/images/poss.png" mce_href="./static/images/poss.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.bootcss.com/angular.js/1.6.3/angular.min.js"></script>
+</head>
+
+<body>
+<div ng-app="ip" ng-controller="ipCtrl" class="container">
+  <br/><h2>大强-访问IP统计 <!--<button type="button" style="float: right;background-color: #212529;color: #fff" class="btn btn-default" ng-click="excel()"><b>下载Excel</b></button> --> <span style="float: right">总访问量:{{ sum }}&emsp;&emsp;</span></h2>
+  <table class="table table-striped" style="text-align: center;">
+    <thead class="thead-dark">
+      <tr>
+        <th>序号</th>
+        <th>国家/地区</th>
+        <th>省份</th>
+        <th>城市</th>
+        <th>访问量</th>
+        <th>该地区最后一个访问IP</th>
+        <th>日志日期</th>
+        <th>更新时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="x in match">
+        <td>{{ $index+1 }}</td>
+        <td>{{ x.areaCountry }}</td>
+        <td>{{ x.areaProvince }}</td>
+        <td>{{ x.areaCity }}</td>
+        <td>{{ x.accessCount }}</td>
+        <td>{{ x.lastAccessIp }}</td>
+        <td>{{ x.logDate | date : 'yyyy-MM-dd'}}</td>
+        <td>{{ x.updateTime | date : 'yyyy-MM-dd HH:mm:ss'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  <!-- angularJS请求node后端数据 -->
+  <script type="text/javascript">
+    var app = angular.module('ip', []);
+    app.controller('ipCtrl', function($scope, $http, $location) {
+      var url = $location.protocol() + "://" + $location.host() + ":" + $location.port();
+      $http.get(url+"/ip").then(function (response) {
+        $scope.match = response.data.ips;
+        $scope.sum = response.data.sum;
+      });
+
+      //下载Excel函数
+//       $scope.excel = ()=>{
+//         $http.get(url+"/excel").then(function (response) {
+//         console.log(JSON.stringify(response.data));
+//       });
+//       }
+    });
+
+    //点击下载Excel
+  </script>
+</body>
+</html>
